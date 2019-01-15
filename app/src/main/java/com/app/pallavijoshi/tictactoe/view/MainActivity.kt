@@ -1,6 +1,7 @@
 package com.app.pallavijoshi.tictactoe.view
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity(), MainActivityPresenter.View {
         setContentView(R.layout.activity_main)
 
         presenter = MainActivityPresenterImpl(this)
+        reset.setOnClickListener { presenter.reset() }
     }
 
     fun onCellClicked(view: View) {
@@ -30,5 +32,13 @@ class MainActivity : AppCompatActivity(), MainActivityPresenter.View {
     override fun setCellText(row: Int, col: Int, player: String) {
         val cell : Button = grid_tictactoe.findViewWithTag("" + row + col)
         cell.text = player
+    }
+
+    override fun showWinnerDialog(player: String) {
+        AlertDialog.Builder(this)
+            .setMessage(resources.getString(R.string.winner) + " " + player)
+            .setPositiveButton(resources.getString(R.string.ok)) { _, _ -> }
+            .create()
+            .show()
     }
 }

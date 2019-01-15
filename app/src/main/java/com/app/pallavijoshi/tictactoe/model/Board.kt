@@ -5,14 +5,20 @@ class Board {
     private val cells = Array<Array<Cell?>>(3) { arrayOfNulls(3) }
     private var currentPlayer: Player? = null
     private var state: State? = null
+    var winningPlayer: Player? = null
 
     /**
      * Setup a new game
      */
 
     init {
+        restart()
+    }
+
+    private fun restart() {
         clearCells()
         currentPlayer = Player.X
+        winningPlayer = null
         state = State.IN_PROGRESS
     }
 
@@ -38,15 +44,20 @@ class Board {
      * @return the player that moved or null if we did not move anything.
      */
     fun setPlayer(row: Int, col: Int): Player? {
-
         var player: Player? = null
 
         if (isValid(row, col)) {
             cells[row][col]?.value = currentPlayer
             player = currentPlayer
 
-            // change the current player and continue
-            changePlayer()
+            if (isPlayerWinning(currentPlayer, row, col)) {
+                state = State.FINISHED
+                winningPlayer = currentPlayer
+
+            } else {
+                // change the current player and continue
+                changePlayer()
+            }
 
         }
 
@@ -62,4 +73,31 @@ class Board {
 
     private fun isCorrectRowOrColumn(row: Int, col: Int) = row in 0..2 && col in 0..2
 
+    /**
+     * @param player
+     * @param currentRow
+     * @param currentCol
+     * @return true if the player won else false
+     */
+    private fun isPlayerWinning(player: Player?, currentRow: Int, currentCol: Int): Boolean {
+
+        return ((cells[currentRow][0]?.value === player         // 3-in-the-row
+                && cells[currentRow][1]?.value === player
+                && cells[currentRow][2]?.value === player)
+                || (cells[0][currentCol]?.value === player      // 3-in-the-column
+                && cells[1][currentCol]?.value === player
+                && cells[2][currentCol]?.value === player)
+                || (currentRow == currentCol            // 3-in-the-diagonal
+                && cells[0][0]?.value === player
+                && cells[1][1]?.value === player
+                && cells[2][2]?.value === player)
+                || (currentRow + currentCol == 2    // 3-in-the-opposite-diagonal
+                && cells[0][2]?.value === player
+                && cells[1][1]?.value === player
+                && cells[2][0]?.value === player))
+    }
+
+    fun clear() {
+        restart()
+    }
 }
