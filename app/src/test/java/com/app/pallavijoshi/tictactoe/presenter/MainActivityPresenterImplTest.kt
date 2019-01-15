@@ -10,7 +10,7 @@ import org.powermock.modules.junit4.PowerMockRunner
 @RunWith(PowerMockRunner::class)
 class MainActivityPresenterImplTest {
 
-    lateinit var presenter: MainActivityPresenter
+    lateinit var presenter: MainActivityPresenterImpl
     lateinit var view: MainActivityPresenter.View
 
     @Before
@@ -26,12 +26,25 @@ class MainActivityPresenterImplTest {
     }
 
     @Test
-    fun onCellClicked() {
+    fun onCellClicked_default() {
         val row = 2
         val col = 2
+
+        view.setCellText(2, 2, "X")
 
         PowerMock.replayAll()
 
         presenter.onCellClicked(row, col)
     }
+
+    @Test
+    fun onCellClicked_wrong_values() {
+        val row = 3
+        val col = 4
+
+        PowerMock.replayAll()
+
+        presenter.onCellClicked(row, col)
+    }
+
 }
